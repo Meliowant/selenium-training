@@ -49,6 +49,7 @@ def test_case_demo(browser):
     # services = browser.find_elements(By.XPATH, "//ul/[@class='pf-col pf-services--item']")
     # get_in_touch_button = browser.find_element(By.id, "getInTouch-top")
     assert True
+    browser.close()
 
 
 def test_case_main_menu_items(main_page):
@@ -56,13 +57,18 @@ def test_case_main_menu_items(main_page):
     Check all items in main menu
     """
     menu_items = [
-        "PC & Laptop", "Mobile", "Smart Home", "Gaming", "Business", "Support"
+        "PC & Laptop",
+        "Mobile",
+        "Smart Home",
+        "Gaming",
+        "Business",
+        "Support",
     ]
     header = main_page.find_element(By.CLASS_NAME, "menuHeader")
     assert header
     items = header.find_elements(By.CLASS_NAME, "optionCont")
     assert len(items) == len(menu_items)
     for label in menu_items:
-        # TODO Check how XPATH works!
-        assert header.find_element(By.XPATH, f"//p[@class=txtCont].text({label})")
-
+        assert header.find_element(
+            By.XPATH, f'//p[@class="txtCont"][contains(text(), "{label}")]'
+        ), label
