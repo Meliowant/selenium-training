@@ -69,8 +69,9 @@ def test_case_main_menu_items(main_page):
     items = header.find_elements(By.CLASS_NAME, "optionCont")
     assert len(items) == len(menu_items)
     for label in menu_items:
-        element = main_page.find_element(
-            By.XPATH, f'//nav[@class="menuHeader"]//p[@class="txtCont"][text() = "{label}"]'
+        element = header.find_element(
+            By.XPATH,
+            f'.//p[@class="txtCont"][text() = "{label}"]'
         )
         assert element, label
         assert element.is_displayed(), label
