@@ -75,5 +75,63 @@ def test_case_main_menu_items(main_page):
         )
         assert element, label
         assert element.is_displayed(), label
-        assert element.is_enabled()
+        assert element.is_enabled(), label
 
+
+def test_case_main_menu_items_have_menus_on_hover(main_page):
+    """
+    Check if main menu is detectable
+    """
+    menu_items = [
+        "PC & Laptop",
+        "Mobile",
+        "Smart Home",
+        "Gaming",
+        "Business",
+        "Support",
+    ]
+    for label in menu_items:
+        menu_item = main_page.find_element(
+            By.XPATH,
+            ("//nav[@class='menuHeader']"
+             f"//p[@class='txtCont'][text() = '{label}']")
+
+        )
+        assert menu_item
+        submenu = menu_item.find_element(
+            By.XPATH,
+            (".//parent::a/following-sibling::div[@class='optionOverlayCont']")
+        )
+        assert submenu
+    pass
+
+
+@pytest.mark.skip
+@pytest.mark.parametrize(
+    "opts",
+    [
+        {
+            "term": "",
+            "dest_url": "",
+        }
+    ],
+    ids=[]
+)
+def test_case_check_search(main_page, opts):
+    """ Check if search works for the argument.
+    """
+    search_element = main_page.find_element(
+        By.XPATH,
+        "//nav[@class='menuSide']/button[@class='btnSearch search-open-button']"
+    )
+    search_field = main_page.find_element(
+        By.XPATH,
+        "/div[@class='search-input']"
+    )
+
+    assert search_element
+    assert search_element.is_displayed(), "Search button is not visible"
+    search_elememnt.click()
+    assert search_field.is_displayed()
+    search_element.send_keys("Aloha!")
+    
