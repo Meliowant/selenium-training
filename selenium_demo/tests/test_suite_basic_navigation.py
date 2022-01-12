@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.relative_locator import locate_with
 import selenium_demo
 import pytest
@@ -78,32 +79,47 @@ def test_case_main_menu_items(main_page):
         assert element.is_enabled(), label
 
 
-def test_case_main_menu_items_have_menus_on_hover(main_page):
-    """
-    Check if main menu is detectable
-    """
-    menu_items = [
-        "PC & Laptop",
-        "Mobile",
-        "Smart Home",
-        "Gaming",
-        "Business",
-        "Support",
-    ]
-    for label in menu_items:
-        menu_item = main_page.find_element(
-            By.XPATH,
-            ("//nav[@class='menuHeader']"
-             f"//p[@class='txtCont'][text() = '{label}']")
+@pytest.mark.parametrize(
+    "opts",
+    [
+        {
+            "menu_item": "PC & Laptop",
+        },
+    ],
+    ids=["PC & Laptop"]
+)
+def test_case_main_menu_items_have_menus(main_page, opts):
+    """ Check if main menu has visible submenus """
+    actions = ActionChains(main_page)
+    menu_item = main_page.find_elements(
+        By.XPATH,
+        (
+            "//nav[@class='menuHeader']//p[@class='txtCont']"
+            f"[text() = '{opts['menu_item']}']/parent::a"
+        )
+    )
+    assert menu_item
+    assert len(menu_item) == 1  # There is only one such element
 
+    menu_item = menu_item[0]
+    assert menu_item.is_displayed()
+    assert menu_item.is_enabled()
+
+    submenu = menu_item.find_elements(
+        By.XPATH,
+        (
+            "./following-sibling::div[@class='optionOverlayCont']"
         )
-        assert menu_item
-        submenu = menu_item.find_element(
-            By.XPATH,
-            (".//parent::a/following-sibling::div[@class='optionOverlayCont']")
-        )
-        assert submenu
-    pass
+    )
+    assert submenu
+    assert len(submenu) == 1
+    submenu = submenu[0]
+    actions.move_to_element(submenu)
+    actions.perform()
+    assert submenu.is_displayed()  # TODO This doesn't work
+
+
+# TODO Add case for menu appears/disappears on mouse movement
 
 
 @pytest.mark.skip
@@ -134,4 +150,4 @@ def test_case_check_search(main_page, opts):
     search_elememnt.click()
     assert search_field.is_displayed()
     search_element.send_keys("Aloha!")
-    
+
