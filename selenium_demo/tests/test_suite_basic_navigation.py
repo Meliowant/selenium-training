@@ -84,6 +84,17 @@ def test_case_main_menu_items(main_page):
     [
         {
             "menu_item": "PC & Laptop",
+            "sub_menus": [
+                {
+                    "title": "Keyboards & Mice",
+                    "sections": [
+                        "Mice",
+                        "Mouse Pads",
+                        "Keyboards",
+                        "Keyboard and mouse combos"
+                    ]
+                },
+            ]
         },
     ],
     ids=["PC & Laptop"]
@@ -105,21 +116,60 @@ def test_case_main_menu_items_have_menus(main_page, opts):
     assert menu_item.is_displayed()
     assert menu_item.is_enabled()
 
-    submenu = menu_item.find_elements(
+    submenu_container = menu_item.find_elements(
         By.XPATH,
         (
             "./following-sibling::div[@class='optionOverlayCont']"
         )
     )
-    assert submenu
-    assert len(submenu) == 1
-    submenu = submenu[0]
-    actions.move_to_element(submenu)
+    assert submenu_container
+    assert len(submenu_container) == 1
+    submenu_container = submenu_container[0]
+    actions.move_to_element(menu_item)
     actions.perform()
-    assert submenu.is_displayed()  # TODO This doesn't work
+    assert submenu_container.is_displayed()
 
+    for submenu_params in opts["sub_menus"]:
+        sm_title = submenu_container.find_elements(
+            By.XPATH,
+            (
+                ".//p[@class='subOptionHeader closed']"
+                f"[contains(text(), '{submenu_params['title']}')]"
+            )
+        )
+        assert sm_title
+        assert len(sm_title) == 1
+        sm_title = sm_title[0]
+        assert sm_title.is_displayed()
 
-# TODO Add case for menu appears/disappears on mouse movement
+        sm_section = sm_title.find_elements(
+            By.XPATH,
+            "./parent::div[@class='subOptionGrouping']"
+        )
+        assert sm_section
+        assert len(sm_section) == 1
+        sm_section = sm_section[0]
+        assert sm_section.is_displayed()
+
+        sub_items = sm_section.find_elements(
+            By.XPATH,
+            ".//div[@class='subOptionChildren']/a[@class='subOption']"
+        )
+        assert len(sub_items) == len(submenu_params["sections"])
+
+        for sect in submenu_params["sections"]:
+            sub_item = sm_section.find_elements(
+                By.XPATH,
+                (
+                    "./div[@class='subOptionChildren']"
+                    f"/a[@class='subOption'][text() = '{sect}']"
+                )
+            )
+            assert sub_item, sect
+            assert len(sub_item) == 1, sect
+            sub_item = sub_item[0]
+            assert sub_item.is_displayed()
+            assert sub_item.is_enabled()
 
 
 @pytest.mark.skip
