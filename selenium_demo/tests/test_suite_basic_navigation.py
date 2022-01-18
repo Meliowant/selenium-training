@@ -94,6 +94,59 @@ def test_case_main_menu_items(main_page):
                         "Keyboard and mouse combos"
                     ]
                 },
+                {
+                    "title": "Home Office",
+                    "sections": [
+                        "Bundles",
+                        "Keyboards & Mice",
+                        "Webcams",
+                        "Furniture"
+                    ]
+                },
+                {
+                    "title": "Sound & Vision",
+                    "sections": [
+                        "Speakers",
+                        "Headsets",
+                        "Microphones",
+                        "Webcams"
+                    ]
+                },
+                # TODO re-work this case, because this attribute is styled as
+                # href not <p>, thus the whole case becomes useless.
+                {
+                    "title": "Videoconferencing",
+                    "sections": [
+                        "Overview",
+                        "Iris Conference Camera",
+                        "Accessories"
+                    ]
+                },
+                {
+                    "title": "Charging & Power",
+                    "sections": [
+                        "Chargers for laptops",
+                        "Surge protection",
+                        "UPS"
+                    ]
+                },
+                {
+                    "title": "Connect",
+                    "sections": [
+                        "Card readers",
+                        "USB hubs",
+                        "Converters & Adapters"
+                    ]
+                },
+                {
+                    "title": "Accessories",
+                    "sections": [
+                        "Laptop Bags & Sleeves",
+                        "Laptop Stands",
+                        "Presenters",
+                        "Cooling fans"
+                    ]
+                }
             ]
         },
     ],
@@ -137,7 +190,7 @@ def test_case_main_menu_items_have_menus(main_page, opts):
                 f"[contains(text(), '{submenu_params['title']}')]"
             )
         )
-        assert sm_title
+        assert sm_title, submenu_params['title']
         assert len(sm_title) == 1
         sm_title = sm_title[0]
         assert sm_title.is_displayed()
