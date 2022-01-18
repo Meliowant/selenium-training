@@ -1,3 +1,5 @@
 venv/
+*.log
 *.pyc
 __cache__/
+.pytest_cache/
