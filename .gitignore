@@ -1,4 +1,5 @@
 venv/
+geckodriver.log
 *.log
 *.pyc
 __cache__/
