@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.relative_locator import locate_with
+from selenium_demo.tests.conftest import id_from_menuitem
 import selenium_demo
 import pytest
 import os
@@ -112,8 +113,6 @@ def test_case_main_menu_items(main_page):
                         "Webcams"
                     ]
                 },
-                # TODO re-work this case, because this attribute is styled as
-                # href not <p>, thus the whole case becomes useless.
                 {
                     "title": "Videoconferencing",
                     "sections": [
@@ -186,7 +185,7 @@ def test_case_main_menu_items_have_menus(main_page, opts):
         sm_title = submenu_container.find_elements(
             By.XPATH,
             (
-                ".//p[@class='subOptionHeader closed']"
+                ".//*[@class='subOptionHeader closed']"
                 f"[contains(text(), '{submenu_params['title']}')]"
             )
         )
@@ -223,6 +222,66 @@ def test_case_main_menu_items_have_menus(main_page, opts):
             sub_item = sub_item[0]
             assert sub_item.is_displayed()
             assert sub_item.is_enabled()
+
+
+@pytest.mark.parametrize(
+    "opts",
+    [
+        {
+            "menu_item": "PC & Laptop",
+            "submenus": [
+                "Keyboards & Mice",
+                "Home Office",
+                "Sound & Vision",
+                "Videoconferencing",
+                "Charging & Power",
+                "Connect",
+                "Accessories"
+            ]
+        },
+        {
+            "menu_item": "Mobile",
+            "submenus": ["Audio", "Power", "Travel", "Photo & Video"]
+        },
+        {
+            "menu_item": "Smart Home",
+            "submenus": ["WIFI", "Other"]
+        },
+        {
+            "menu_item": "Gaming",
+            "submenus": [
+                "Control",
+                "Gaming consoles",
+                "Audio",
+                "Furniture",
+                "Accessories"
+            ]
+        },
+        {
+            "menu_item": "Business",
+            "submenus": ["Solutions", "Video Conferencing", "Partners"]
+        },
+        {
+            "menu_item": "Support",
+            "submenus": ["Support", "Downloads", "Spareparts", "Contact"]
+        }
+    ],
+    ids=id_from_menuitem
+)
+def test_case_main_menu_subitems_markup(main_page, opts):
+    """Check proper markup in the submenu items"""
+    for itm in opts["submenus"]:
+        menu_item = main_page.find_elements(
+            By.XPATH,
+            (
+                "//nav[@class='menuHeader']//p[@class='txtCont']"
+                f"[text() = '{opts['menu_item']}']/parent::a"
+                "/following-sibling::div[@class='optionOverlayCont']"
+                f"//p[@class='subOptionHeader closed'][text() = '{itm}']"
+            )
+        )
+        assert menu_item, f"Bad markup for '{opts['menu_item']}->{itm}'"
+        assert len(menu_item) == 1
 
 
 @pytest.mark.skip
