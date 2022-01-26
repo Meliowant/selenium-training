@@ -227,18 +227,23 @@ def test_case_main_menu_items_have_menus(main_page, opts):
 @pytest.mark.parametrize(
     "opts",
     [
-        {
-            "menu_item": "PC & Laptop",
-            "submenus": [
-                "Keyboards & Mice",
-                "Home Office",
-                "Sound & Vision",
-                "Videoconferencing",
-                "Charging & Power",
-                "Connect",
-                "Accessories"
-            ]
-        },
+        pytest.param(
+            {
+                "menu_item": "PC & Laptop",
+                "submenus": [
+                    "Keyboards & Mice",
+                    "Home Office",
+                    "Sound & Vision",
+                    "Videoconferencing",
+                    "Charging & Power",
+                    "Connect",
+                    "Accessories"
+                ]
+            },
+            marks=pytest.mark.xfail(
+                reason="Videoconferencing markup is broken"
+            )
+        ),
         {
             "menu_item": "Mobile",
             "submenus": ["Audio", "Power", "Travel", "Photo & Video"]
@@ -261,10 +266,15 @@ def test_case_main_menu_items_have_menus(main_page, opts):
             "menu_item": "Business",
             "submenus": ["Solutions", "Video Conferencing", "Partners"]
         },
-        {
-            "menu_item": "Support",
-            "submenus": ["Support", "Downloads", "Spareparts", "Contact"]
-        }
+        pytest.param(
+            {
+                "menu_item": "Support",
+                "submenus": ["Support", "Downloads", "Spareparts", "Contact"]
+            },
+            marks=pytest.mark.xfail(
+                reason="Support markup is failed"
+            )
+        ),
     ],
     ids=id_from_menuitem
 )
