@@ -5,4 +5,4 @@ geckodriver.log
 __cache__/
 .pytest_cache/
 *.egg-info/
-geckodriver*
+
