@@ -2,6 +2,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.relative_locator import locate_with
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium_demo.tests.conftest import id_from_menuitem
 import selenium_demo
 import pytest
@@ -294,32 +296,52 @@ def test_case_main_menu_subitems_markup(main_page, opts):
         assert len(menu_item) == 1
 
 
-@pytest.mark.skip
-@pytest.mark.parametrize(
-    "opts",
-    [
-        {
-            "term": "",
-            "dest_url": "",
-        }
-    ],
-    ids=[]
-)
-def test_case_check_search(main_page, opts):
-    """ Check if search works for the argument.
-    """
+def test_case_check_search_is_present(main_page):
+    """ Check if search button is present on the screen. """
     search_element = main_page.find_element(
         By.XPATH,
         "//nav[@class='menuSide']/button[@class='btnSearch search-open-button']"
     )
-    search_field = main_page.find_element(
-        By.XPATH,
-        "/div[@class='search-input']"
-    )
-
     assert search_element
     assert search_element.is_displayed(), "Search button is not visible"
-    search_elememnt.click()
-    assert search_field.is_displayed()
-    search_element.send_keys("Aloha!")
 
+
+def test_case_check_search_input_toggles(main_page):
+    """ Check that search input expands and collapses as expected """
+    search_button_switcher = main_page.find_element(
+        By.XPATH,
+        "//nav[@class='menuSide']"
+        "/button[@class='btnSearch search-open-button']"
+    )
+    # Use CSS selector for search_box, as it appends new style class.
+    # XPATH doesn't provide enough flexibility.
+    search_field = main_page.find_element(
+        By.CSS_SELECTOR, "div.search-box"
+    )
+
+    assert not search_field.is_displayed()
+    search_button_switcher.click()
+    assert not search_button_switcher.is_displayed()
+    assert search_field.is_displayed()
+
+    search_bar_btns_css = [
+        "svg.magnifying-glass",
+        "form.search-form",
+        "div.search-close-button",
+        "a.i-button"
+    ]
+    for btn_css in search_bar_btns_css:
+        element = search_field.find_element(By.CSS_SELECTOR, btn_css)
+        assert element.is_displayed()
+
+    search_field.find_element(
+        By.CSS_SELECTOR, "div.search-close-button"
+    ).click()
+    WebDriverWait(main_page, 10).until_not(EC.visibility_of(search_field))
+    assert not search_field.is_displayed()
+
+    for btn_css in search_bar_btns_css:
+        element = search_field.find_element(By.CSS_SELECTOR, btn_css)
+        assert not element.is_displayed()
+
+    assert search_button_switcher.is_displayed()
