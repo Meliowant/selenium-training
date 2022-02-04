@@ -5,10 +5,15 @@ from selenium.webdriver.support.relative_locator import locate_with
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium_demo.tests.conftest import id_from_menuitem
+from selenium.webdriver.common.keys import Keys
 import selenium_demo
 import pytest
 import os
 import pathlib
+
+
+def id_from_name(arg):
+    return arg.get("test_name").replace(" ", "_")
 
 
 @pytest.fixture
@@ -345,3 +350,62 @@ def test_case_check_search_input_toggles(main_page):
         assert not element.is_displayed()
 
     assert search_button_switcher.is_displayed()
+
+
+@pytest.mark.parametrize(
+    "opts",
+    [
+        {
+            "test_name": "Empty query",
+            "query": "",
+            "expected_help_text": (
+                "Our support is organized by product. First you will need to "
+                "find your product, then you will be able to get support, "
+                "information, downloads, etc."
+            ),
+            "has_items": False,
+        },
+        pytest.param(
+            {
+                "test_name": "Non-empty query",
+                "query": "test",
+                "expected_help_text": "",
+                "has_items": True,
+            },
+            marks=pytest.mark.skip()
+        ),
+    ],
+    ids=id_from_name
+)
+def test_case_check_search_redirects(main_page, opts):
+    """ Check if search button works correctly """
+    search_button_toggler = main_page.find_element(
+        By.CLASS_NAME, "search-open-button"
+    )
+    search_field = main_page.find_element(
+        By.CSS_SELECTOR, "form.search-form > input.search-input"
+    )
+    search_btn = main_page.find_element(
+        By.CSS_SELECTOR, "div.search-box > svg.magnifying-glass"
+    )
+
+    search_button_toggler.click()
+    assert search_field
+    search_field.send_keys(opts["query"], Keys.RETURN)
+
+    WebDriverWait(main_page, 10).until(
+        EC.presence_of_element_located(
+            (By.CSS_SELECTOR, "div.c-search-results")
+        )
+    )
+    search_results = main_page.find_element(
+        By.CSS_SELECTOR, "div.c-search-results > section"
+    )
+    assert search_results
+    assert search_results.text == "Searching for something?"
+
+    search_help = search_results.find_element(
+        By.XPATH, "//parent::section/following-sibling::div[@class='l-grid']//p"
+    )
+    assert search_help
+    assert opts["expected_help_text"] in search_help.text
