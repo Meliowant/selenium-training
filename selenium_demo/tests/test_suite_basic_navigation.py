@@ -385,10 +385,6 @@ def test_case_check_search_redirects(main_page, opts):
     search_field = main_page.find_element(
         By.CSS_SELECTOR, "form.search-form > input.search-input"
     )
-    search_btn = main_page.find_element(
-        By.CSS_SELECTOR, "div.search-box > svg.magnifying-glass"
-    )
-
     search_button_toggler.click()
     assert search_field
     search_field.send_keys(opts["query"], Keys.RETURN)
@@ -405,7 +401,8 @@ def test_case_check_search_redirects(main_page, opts):
     assert search_results.text == "Searching for something?"
 
     search_help = search_results.find_element(
-        By.XPATH, "//parent::section/following-sibling::div[@class='l-grid']//p"
+        By.XPATH,
+        "//parent::section/following-sibling::div[@class='l-grid']//p"
     )
     assert search_help
     assert opts["expected_help_text"] in search_help.text
