@@ -365,15 +365,12 @@ def test_case_check_search_input_toggles(main_page):
             ),
             "has_items": False,
         },
-        pytest.param(
-            {
-                "test_name": "Non-empty query",
-                "query": "test",
-                "expected_help_text": "",
-                "has_items": True,
-            },
-            marks=pytest.mark.skip()
-        ),
+        {
+            "test_name": "Non-empty query",
+            "query": "test",
+            "expected_help_text": "",
+            "has_items": True,
+        },
     ],
     ids=id_from_name
 )
@@ -406,3 +403,10 @@ def test_case_check_search_redirects(main_page, opts):
     )
     assert search_help
     assert opts["expected_help_text"] in search_help.text
+
+    search_items = search_results.find_elements(
+        By.XPATH,
+        "//parent::section/following-sibling::div[@class='l-grid']"
+        "//div[@class='c-card has--radius']"
+    )
+    assert (len(search_items) > 0) is opts["has_items"]
