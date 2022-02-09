@@ -410,3 +410,25 @@ def test_case_check_search_redirects(main_page, opts):
         "//div[@class='c-card has--radius']"
     )
     assert (len(search_items) > 0) is opts["has_items"]
+
+
+def test_case_check_banner(main_page):
+    """ Check if we have a correct banner on the first page """
+    banner = main_page.find_element(By.CLASS_NAME, "c-key-visual-header")
+    assert banner.is_displayed()
+    banner_url = banner.find_element(By.XPATH, ".//parent::a")
+    assert banner_url.get_dom_attribute("href") == "/en/campaigns/webcams"
+    banner_text = banner.find_element(By.CLASS_NAME, "c-key-visual-header__text")
+    assert banner_text.text == "First impressions\nare only made once"
+    banner_highlighted_text = banner_text.find_element(
+        By.XPATH, "./h1/span"
+    )
+    assert banner_highlighted_text.value_of_css_property(
+        "color"
+    ) == "rgb(224, 32, 27)"
+    banner_regular_text = banner_text.find_element(
+        By.XPATH, ".//parent::h1"
+    )
+    assert banner_regular_text.value_of_css_property(
+        "color"
+    ) == "rgb(14, 12, 56)"
