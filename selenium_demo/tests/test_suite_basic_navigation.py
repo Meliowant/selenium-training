@@ -432,3 +432,20 @@ def test_case_check_banner(main_page):
     assert banner_regular_text.value_of_css_property(
         "color"
     ) == "rgb(14, 12, 56)"
+
+
+def test_case_check_banner_button(main_page):
+    """ Check button "Discover more" at the banner """
+    banner_button = main_page.find_element(
+        By.XPATH,
+        "//div[contains(@class, 'btn')][contains(text(), 'Discover more')]"
+    )
+    assert banner_button
+    assert banner_button.value_of_css_property(
+        "background-color"
+    ) == "rgb(255, 228, 0)"
+    banner_button.click()
+    WebDriverWait(main_page, 10).until(
+        EC.url_changes("https://www.trust.com/en/")
+    )
+    assert main_page.current_url == "https://www.trust.com/en/campaigns/webcams"
