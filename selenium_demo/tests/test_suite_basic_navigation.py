@@ -20,7 +20,11 @@ def id_from_name(arg):
 def browser(driver="geckodriver"):
     module_path = pathlib.Path(os.path.abspath(selenium_demo.__file__))
     geckodriver_path = module_path.parent / "drivers" / driver
-    browser_ = webdriver.Firefox(executable_path=geckodriver_path)
+    ff_options = webdriver.firefox.options.Options()
+    ff_options.add_argument("-headless")
+    browser_ = webdriver.Firefox(
+        executable_path=geckodriver_path, options=ff_options
+    )
     return browser_
 
 
