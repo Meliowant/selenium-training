@@ -452,4 +452,37 @@ def test_case_check_banner_button(main_page):
     WebDriverWait(main_page, 10).until(
         EC.url_changes("https://www.trust.com/en/")
     )
-    assert main_page.current_url == "https://www.trust.com/en/campaigns/webcams"
+    assert main_page.current_url == \
+        "https://www.trust.com/en/campaigns/webcams"
+
+
+def test_case_check_featured_products_presence(main_page):
+    """ Check if section 'Featured products' is present on the main page """
+    fp_section_header = main_page.find_element(
+        By.XPATH,
+        (
+            "//div[@class='l-maxwidth']/"
+            "h2[contains(@class, 'h2')][contains(text(), 'Featured products')]"
+        )
+    )
+    assert fp_section_header.is_displayed()
+
+    fp_section = fp_section_header.find_element(
+        By.XPATH, ".//parent::div[@class='l-maxwidth']"
+    )
+    assert fp_section
+
+    products_container = fp_section.find_element(
+        By.CSS_SELECTOR, "div.swiper-container-product-card"
+    )
+    assert products_container
+
+    scroll_left_button = products_container.find_element(
+        By.CLASS_NAME, "swiper-button-prev"
+    )
+    scroll_right_button = fp_section.find_element(
+        By.CSS_SELECTOR, "div.swiper-button-next"
+    )
+    featured_products_list = fp_section.find_element(
+        By.XPATH, ".//div[@class='swiper-wrapper']"
+    )
