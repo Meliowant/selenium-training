@@ -486,3 +486,15 @@ def test_case_check_featured_products_presence(main_page):
     featured_products_list = fp_section.find_element(
         By.XPATH, ".//div[@class='swiper-wrapper']"
     )
+
+
+@pytest.mark.xfail(reason="visibility attribute is set to hidden")
+@pytest.mark.parametrize(
+    "btn", ["prev", "next"], ids=["previous button", "next button"]
+)
+def test_case_check_featured_products_scroll_buttons_visible(main_page, btn):
+    """ Check if scrolling with button is working as expected """
+    fp_scroll_btn = main_page.find_element(
+        By.CSS_SELECTOR, f"div.swiper-button-{btn}"
+    )
+    assert fp_scroll_btn.is_displayed()
