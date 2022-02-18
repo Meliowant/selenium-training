@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.relative_locator import locate_with
@@ -498,3 +499,52 @@ def test_case_check_featured_products_scroll_buttons_visible(main_page, btn):
         By.CSS_SELECTOR, f"div.swiper-button-{btn}"
     )
     assert fp_scroll_btn.is_displayed()
+
+
+def test_case_check_featured_products_scroll_buttons_scroll(main_page):
+    """ Check if scroller is working with the scroll buttons """
+    fp_elements = main_page.find_elements(
+        By.CSS_SELECTOR, "div.swiper-wrapper > div.swiper-slide"
+    )
+    fp_initial_visible_elements = list(filter(
+        lambda x: x.text != "" and x.is_displayed(), fp_elements
+    ))
+
+    leftmost_idx = 0
+    main_page.execute_script("$('div.swiper-button-prev').click()")
+    assert list(filter(
+        lambda x: x.text != "" and x.is_displayed(), fp_elements
+    )) == fp_initial_visible_elements
+
+    main_page.execute_script("$('div.swiper-button-next').click()")
+    assert list(filter(
+        lambda x: x.text != "" and x.is_displayed(), fp_elements
+    )) != fp_initial_visible_elements
+    leftmost_idx = 1
+
+    # Go to the end of the list
+    for _ in range(len(fp_elements) - len(fp_initial_visible_elements) - 1):
+        main_page.execute_script("$('div.swiper-button-next').click()")
+        try:
+            WebDriverWait(main_page, 10).until(
+                EC.invisibility_of_element(fp_elements[leftmost_idx])
+            )
+            leftmost_idx += 1
+        except TimeoutException:
+            pass
+
+    fp_final_visible_elements = list(filter(
+        lambda x: len(x.text) > 0 and x.is_displayed(), fp_elements
+    ))
+
+    main_page.execute_script("$('div.swiper-button-next').click()")
+    t = list(filter(
+        lambda x: len(x.text) > 0 and x.is_displayed(), fp_elements
+    ))
+
+    assert t == fp_final_visible_elements, [x.text for x in t]
+
+    main_page.execute_script("$('div.swiper-button-prev').click()")
+    assert list(filter(
+        lambda x: x.is_displayed(), fp_elements
+    )) != fp_final_visible_elements
