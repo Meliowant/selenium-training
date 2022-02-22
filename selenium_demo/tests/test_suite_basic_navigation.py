@@ -548,3 +548,78 @@ def test_case_check_featured_products_scroll_buttons_scroll(main_page):
     assert list(filter(
         lambda x: x.is_displayed(), fp_elements
     )) != fp_final_visible_elements
+
+
+def test_case_check_featured_products_mouse_scroll(main_page):
+    """ Verify mouse scroll is working on Featured Products """
+    fp_section = main_page.find_element(
+        By.CSS_SELECTOR, "div.swiper-wrapper"
+    )
+    fp_list = fp_section.find_elements(
+        By.CSS_SELECTOR, "div.swiper-slide"
+    )
+    fp_initial_visible_elements = list(
+        filter(
+            lambda x: len(x.text) > 0 and x.is_displayed(),
+            fp_list
+        )
+    )
+
+    mouse_drag = ActionChains(main_page)
+    scroll_to_prev = fp_list[0].size["width"]
+    scroll_to_next = - fp_list[0].size["width"]
+
+    main_page.execute_script("arguments[0].scrollIntoView(true);", fp_list[0])
+    mouse_drag.move_to_element(fp_list[0]).perform()
+    mouse_drag.drag_and_drop_by_offset(
+        fp_section, scroll_to_prev, 0
+    ).perform()
+
+    visible_elements = list(
+        filter(
+            lambda x: len(x.text) > 0 and x.is_displayed(),
+            fp_list
+        )
+    )
+    assert visible_elements == fp_initial_visible_elements
+
+    # Verify scrolling right
+    mouse_drag.drag_and_drop_by_offset(fp_section, scroll_to_next, 0).perform()
+    visible_elements = list(
+        filter(
+            lambda x: len(x.text) > 0 and x.is_displayed(),
+            fp_list
+        )
+    )
+    assert visible_elements != fp_initial_visible_elements
+
+    # Verify scrolling to the end
+    for idx in range(len(visible_elements), len(fp_list)):
+        current_visible_element = fp_list[idx]
+        mouse_drag.move_to_element(current_visible_element)
+        mouse_drag.drag_and_drop_by_offset(current_visible_element, scroll_to_next, 0)
+        mouse_drag.perform()
+
+    final_visible_elements = list(
+        filter(
+            lambda x: len(x.text) > 0 and x.is_displayed(),
+            fp_list
+        )
+    )
+    assert final_visible_elements != visible_elements
+
+    # Verify we don't scroll over the carousel.
+    current_visible_element = fp_list[len(fp_list) - 1]
+    mouse_drag.move_to_element(current_visible_element)
+    mouse_drag.drag_and_drop_by_offset(
+        current_visible_element, scroll_to_next, 0
+    )
+    mouse_drag.perform()
+
+    visible_elements = list(
+        filter(
+            lambda x: len(x.text) > 0 and x.is_displayed(),
+            fp_list
+        )
+    )
+    assert visible_elements == final_visible_elements
