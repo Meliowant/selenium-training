@@ -84,8 +84,7 @@ def test_case_main_menu_items(main_page):
     assert len(items) == len(menu_items)
     for label in menu_items:
         element = header.find_element(
-            By.XPATH,
-            f'.//p[@class="txtCont"][text() = "{label}"]'
+            By.XPATH, f'.//p[@class="txtCont"][text() = "{label}"]'
         )
         assert element, label
         assert element.is_displayed(), label
@@ -104,8 +103,8 @@ def test_case_main_menu_items(main_page):
                         "Mice",
                         "Mouse Pads",
                         "Keyboards",
-                        "Keyboard and mouse combos"
-                    ]
+                        "Keyboard and mouse combos",
+                    ],
                 },
                 {
                     "title": "Home Office",
@@ -113,8 +112,8 @@ def test_case_main_menu_items(main_page):
                         "Bundles",
                         "Keyboards & Mice",
                         "Webcams",
-                        "Furniture"
-                    ]
+                        "Furniture",
+                    ],
                 },
                 {
                     "title": "Sound & Vision",
@@ -122,32 +121,32 @@ def test_case_main_menu_items(main_page):
                         "Speakers",
                         "Headsets",
                         "Microphones",
-                        "Webcams"
-                    ]
+                        "Webcams",
+                    ],
                 },
                 {
                     "title": "Videoconferencing",
                     "sections": [
                         "Overview",
                         "Iris Conference Camera",
-                        "Accessories"
-                    ]
+                        "Accessories",
+                    ],
                 },
                 {
                     "title": "Charging & Power",
                     "sections": [
                         "Chargers for laptops",
                         "Surge protection",
-                        "UPS"
-                    ]
+                        "UPS",
+                    ],
                 },
                 {
                     "title": "Connect",
                     "sections": [
                         "Card readers",
                         "USB hubs",
-                        "Converters & Adapters"
-                    ]
+                        "Converters & Adapters",
+                    ],
                 },
                 {
                     "title": "Accessories",
@@ -155,23 +154,23 @@ def test_case_main_menu_items(main_page):
                         "Laptop Bags & Sleeves",
                         "Laptop Stands",
                         "Presenters",
-                        "Cooling fans"
-                    ]
-                }
-            ]
+                        "Cooling fans",
+                    ],
+                },
+            ],
         },
     ],
-    ids=["PC & Laptop"]
+    ids=["PC & Laptop"],
 )
 def test_case_main_menu_items_have_menus(main_page, opts):
-    """ Check if main menu has visible submenus """
+    """Check if main menu has visible submenus"""
     actions = ActionChains(main_page)
     menu_item = main_page.find_elements(
         By.XPATH,
         (
             "//nav[@class='menuHeader']//p[@class='txtCont']"
             f"[text() = '{opts['menu_item']}']/parent::a"
-        )
+        ),
     )
     assert menu_item
     assert len(menu_item) == 1  # There is only one such element
@@ -181,10 +180,7 @@ def test_case_main_menu_items_have_menus(main_page, opts):
     assert menu_item.is_enabled()
 
     submenu_container = menu_item.find_elements(
-        By.XPATH,
-        (
-            "./following-sibling::div[@class='optionOverlayCont']"
-        )
+        By.XPATH, ("./following-sibling::div[@class='optionOverlayCont']")
     )
     assert submenu_container
     assert len(submenu_container) == 1
@@ -199,16 +195,15 @@ def test_case_main_menu_items_have_menus(main_page, opts):
             (
                 ".//*[@class='subOptionHeader closed']"
                 f"[contains(text(), '{submenu_params['title']}')]"
-            )
+            ),
         )
-        assert sm_title, submenu_params['title']
+        assert sm_title, submenu_params["title"]
         assert len(sm_title) == 1
         sm_title = sm_title[0]
         assert sm_title.is_displayed()
 
         sm_section = sm_title.find_elements(
-            By.XPATH,
-            "./parent::div[@class='subOptionGrouping']"
+            By.XPATH, "./parent::div[@class='subOptionGrouping']"
         )
         assert sm_section
         assert len(sm_section) == 1
@@ -216,8 +211,7 @@ def test_case_main_menu_items_have_menus(main_page, opts):
         assert sm_section.is_displayed()
 
         sub_items = sm_section.find_elements(
-            By.XPATH,
-            ".//div[@class='subOptionChildren']/a[@class='subOption']"
+            By.XPATH, ".//div[@class='subOptionChildren']/a[@class='subOption']"
         )
         assert len(sub_items) == len(submenu_params["sections"])
 
@@ -227,7 +221,7 @@ def test_case_main_menu_items_have_menus(main_page, opts):
                 (
                     "./div[@class='subOptionChildren']"
                     f"/a[@class='subOption'][text() = '{sect}']"
-                )
+                ),
             )
             assert sub_item, sect
             assert len(sub_item) == 1, sect
@@ -249,21 +243,18 @@ def test_case_main_menu_items_have_menus(main_page, opts):
                     "Videoconferencing",
                     "Charging & Power",
                     "Connect",
-                    "Accessories"
-                ]
+                    "Accessories",
+                ],
             },
             marks=pytest.mark.xfail(
                 reason="Videoconferencing markup is broken"
-            )
+            ),
         ),
         {
             "menu_item": "Mobile",
-            "submenus": ["Audio", "Power", "Travel", "Photo & Video"]
+            "submenus": ["Audio", "Power", "Travel", "Photo & Video"],
         },
-        {
-            "menu_item": "Smart Home",
-            "submenus": ["WIFI", "Other"]
-        },
+        {"menu_item": "Smart Home", "submenus": ["WIFI", "Other"]},
         {
             "menu_item": "Gaming",
             "submenus": [
@@ -271,24 +262,22 @@ def test_case_main_menu_items_have_menus(main_page, opts):
                 "Gaming consoles",
                 "Audio",
                 "Furniture",
-                "Accessories"
-            ]
+                "Accessories",
+            ],
         },
         {
             "menu_item": "Business",
-            "submenus": ["Solutions", "Video Conferencing", "Partners"]
+            "submenus": ["Solutions", "Video Conferencing", "Partners"],
         },
         pytest.param(
             {
                 "menu_item": "Support",
-                "submenus": ["Support", "Downloads", "Spareparts", "Contact"]
+                "submenus": ["Support", "Downloads", "Spareparts", "Contact"],
             },
-            marks=pytest.mark.xfail(
-                reason="Support markup is failed"
-            )
+            marks=pytest.mark.xfail(reason="Support markup is failed"),
         ),
     ],
-    ids=id_from_menuitem
+    ids=id_from_menuitem,
 )
 def test_case_main_menu_subitems_markup(main_page, opts):
     """Check proper markup in the submenu items"""
@@ -300,34 +289,32 @@ def test_case_main_menu_subitems_markup(main_page, opts):
                 f"[text() = '{opts['menu_item']}']/parent::a"
                 "/following-sibling::div[@class='optionOverlayCont']"
                 f"//p[@class='subOptionHeader closed'][text() = '{itm}']"
-            )
+            ),
         )
         assert menu_item, f"Bad markup for '{opts['menu_item']}->{itm}'"
         assert len(menu_item) == 1
 
 
 def test_case_check_search_is_present(main_page):
-    """ Check if search button is present on the screen. """
+    """Check if search button is present on the screen."""
     search_element = main_page.find_element(
         By.XPATH,
-        "//nav[@class='menuSide']/button[@class='btnSearch search-open-button']"
+        "//nav[@class='menuSide']/button[@class='btnSearch search-open-button']",
     )
     assert search_element
     assert search_element.is_displayed(), "Search button is not visible"
 
 
 def test_case_check_search_input_toggles(main_page):
-    """ Check that search input expands and collapses as expected """
+    """Check that search input expands and collapses as expected"""
     search_button_switcher = main_page.find_element(
         By.XPATH,
         "//nav[@class='menuSide']"
-        "/button[@class='btnSearch search-open-button']"
+        "/button[@class='btnSearch search-open-button']",
     )
     # Use CSS selector for search_box, as it appends new style class.
     # XPATH doesn't provide enough flexibility.
-    search_field = main_page.find_element(
-        By.CSS_SELECTOR, "div.search-box"
-    )
+    search_field = main_page.find_element(By.CSS_SELECTOR, "div.search-box")
 
     assert not search_field.is_displayed()
     search_button_switcher.click()
@@ -338,7 +325,7 @@ def test_case_check_search_input_toggles(main_page):
         "svg.magnifying-glass",
         "form.search-form",
         "div.search-close-button",
-        "a.i-button"
+        "a.i-button",
     ]
     for btn_css in search_bar_btns_css:
         element = search_field.find_element(By.CSS_SELECTOR, btn_css)
@@ -377,10 +364,10 @@ def test_case_check_search_input_toggles(main_page):
             "has_items": True,
         },
     ],
-    ids=id_from_name
+    ids=id_from_name,
 )
 def test_case_check_search_redirects(main_page, opts):
-    """ Check if search button works correctly """
+    """Check if search button works correctly"""
     search_button_toggler = main_page.find_element(
         By.CLASS_NAME, "search-open-button"
     )
@@ -403,8 +390,7 @@ def test_case_check_search_redirects(main_page, opts):
     assert search_results.text == "Searching for something?"
 
     search_help = search_results.find_element(
-        By.XPATH,
-        "//parent::section/following-sibling::div[@class='l-grid']//p"
+        By.XPATH, "//parent::section/following-sibling::div[@class='l-grid']//p"
     )
     assert search_help
     assert opts["expected_help_text"] in search_help.text
@@ -412,59 +398,58 @@ def test_case_check_search_redirects(main_page, opts):
     search_items = search_results.find_elements(
         By.XPATH,
         "//parent::section/following-sibling::div[@class='l-grid']"
-        "//div[@class='c-card has--radius']"
+        "//div[@class='c-card has--radius']",
     )
     assert (len(search_items) > 0) is opts["has_items"]
 
 
 def test_case_check_banner(main_page):
-    """ Check if we have a correct banner on the first page """
+    """Check if we have a correct banner on the first page"""
     banner = main_page.find_element(By.CLASS_NAME, "c-key-visual-header")
     assert banner.is_displayed()
     banner_url = banner.find_element(By.XPATH, ".//parent::a")
     assert banner_url.get_dom_attribute("href") == "/en/campaigns/webcams"
-    banner_text = banner.find_element(By.CLASS_NAME, "c-key-visual-header__text")
+    banner_text = banner.find_element(
+        By.CLASS_NAME, "c-key-visual-header__text"
+    )
     assert banner_text.text == "First impressions\nare only made once"
-    banner_highlighted_text = banner_text.find_element(
-        By.XPATH, "./h1/span"
+    banner_highlighted_text = banner_text.find_element(By.XPATH, "./h1/span")
+    assert (
+        banner_highlighted_text.value_of_css_property("color")
+        == "rgb(224, 32, 27)"
     )
-    assert banner_highlighted_text.value_of_css_property(
-        "color"
-    ) == "rgb(224, 32, 27)"
-    banner_regular_text = banner_text.find_element(
-        By.XPATH, ".//parent::h1"
+    banner_regular_text = banner_text.find_element(By.XPATH, ".//parent::h1")
+    assert (
+        banner_regular_text.value_of_css_property("color") == "rgb(14, 12, 56)"
     )
-    assert banner_regular_text.value_of_css_property(
-        "color"
-    ) == "rgb(14, 12, 56)"
 
 
 def test_case_check_banner_button(main_page):
-    """ Check button "Discover more" at the banner """
+    """Check button "Discover more" at the banner"""
     banner_button = main_page.find_element(
         By.XPATH,
-        "//div[contains(@class, 'btn')][contains(text(), 'Discover more')]"
+        "//div[contains(@class, 'btn')][contains(text(), 'Discover more')]",
     )
     assert banner_button
-    assert banner_button.value_of_css_property(
-        "background-color"
-    ) == "rgb(255, 228, 0)"
+    assert (
+        banner_button.value_of_css_property("background-color")
+        == "rgb(255, 228, 0)"
+    )
     banner_button.click()
     WebDriverWait(main_page, 10).until(
         EC.url_changes("https://www.trust.com/en/")
     )
-    assert main_page.current_url == \
-        "https://www.trust.com/en/campaigns/webcams"
+    assert main_page.current_url == "https://www.trust.com/en/campaigns/webcams"
 
 
 def test_case_check_featured_products_presence(main_page):
-    """ Check if section 'Featured products' is present on the main page """
+    """Check if section 'Featured products' is present on the main page"""
     fp_section_header = main_page.find_element(
         By.XPATH,
         (
             "//div[@class='l-maxwidth']/"
             "h2[contains(@class, 'h2')][contains(text(), 'Featured products')]"
-        )
+        ),
     )
     assert fp_section_header.is_displayed()
 
@@ -494,7 +479,7 @@ def test_case_check_featured_products_presence(main_page):
     "btn", ["prev", "next"], ids=["previous button", "next button"]
 )
 def test_case_check_featured_products_scroll_buttons_visible(main_page, btn):
-    """ Check if scrolling with button is working as expected """
+    """Check if scrolling with button is working as expected"""
     fp_scroll_btn = main_page.find_element(
         By.CSS_SELECTOR, f"div.swiper-button-{btn}"
     )
@@ -502,24 +487,26 @@ def test_case_check_featured_products_scroll_buttons_visible(main_page, btn):
 
 
 def test_case_check_featured_products_scroll_buttons_scroll(main_page):
-    """ Check if scroller is working with the scroll buttons """
+    """Check if scroller is working with the scroll buttons"""
     fp_elements = main_page.find_elements(
         By.CSS_SELECTOR, "div.swiper-wrapper > div.swiper-slide"
     )
-    fp_initial_visible_elements = list(filter(
-        lambda x: x.text != "" and x.is_displayed(), fp_elements
-    ))
+    fp_initial_visible_elements = list(
+        filter(lambda x: x.text != "" and x.is_displayed(), fp_elements)
+    )
 
     leftmost_idx = 0
     main_page.execute_script("$('div.swiper-button-prev').click()")
-    assert list(filter(
-        lambda x: x.text != "" and x.is_displayed(), fp_elements
-    )) == fp_initial_visible_elements
+    assert (
+        list(filter(lambda x: x.text != "" and x.is_displayed(), fp_elements))
+        == fp_initial_visible_elements
+    )
 
     main_page.execute_script("$('div.swiper-button-next').click()")
-    assert list(filter(
-        lambda x: x.text != "" and x.is_displayed(), fp_elements
-    )) != fp_initial_visible_elements
+    assert (
+        list(filter(lambda x: x.text != "" and x.is_displayed(), fp_elements))
+        != fp_initial_visible_elements
+    )
     leftmost_idx = 1
 
     # Go to the end of the list
@@ -533,63 +520,49 @@ def test_case_check_featured_products_scroll_buttons_scroll(main_page):
         except TimeoutException:
             pass
 
-    fp_final_visible_elements = list(filter(
-        lambda x: len(x.text) > 0 and x.is_displayed(), fp_elements
-    ))
+    fp_final_visible_elements = list(
+        filter(lambda x: len(x.text) > 0 and x.is_displayed(), fp_elements)
+    )
 
     main_page.execute_script("$('div.swiper-button-next').click()")
-    t = list(filter(
-        lambda x: len(x.text) > 0 and x.is_displayed(), fp_elements
-    ))
+    t = list(
+        filter(lambda x: len(x.text) > 0 and x.is_displayed(), fp_elements)
+    )
 
     assert t == fp_final_visible_elements, [x.text for x in t]
 
     main_page.execute_script("$('div.swiper-button-prev').click()")
-    assert list(filter(
-        lambda x: x.is_displayed(), fp_elements
-    )) != fp_final_visible_elements
+    assert (
+        list(filter(lambda x: x.is_displayed(), fp_elements))
+        != fp_final_visible_elements
+    )
 
 
 def test_case_check_featured_products_mouse_scroll(main_page):
-    """ Verify mouse scroll is working on Featured Products """
-    fp_section = main_page.find_element(
-        By.CSS_SELECTOR, "div.swiper-wrapper"
-    )
-    fp_list = fp_section.find_elements(
-        By.CSS_SELECTOR, "div.swiper-slide"
-    )
+    """Verify mouse scroll is working on Featured Products"""
+    fp_section = main_page.find_element(By.CSS_SELECTOR, "div.swiper-wrapper")
+    fp_list = fp_section.find_elements(By.CSS_SELECTOR, "div.swiper-slide")
     fp_initial_visible_elements = list(
-        filter(
-            lambda x: len(x.text) > 0 and x.is_displayed(),
-            fp_list
-        )
+        filter(lambda x: len(x.text) > 0 and x.is_displayed(), fp_list)
     )
 
     mouse_drag = ActionChains(main_page)
     scroll_to_prev = fp_list[0].size["width"]
-    scroll_to_next = - fp_list[0].size["width"]
+    scroll_to_next = -fp_list[0].size["width"]
 
     main_page.execute_script("arguments[0].scrollIntoView(true);", fp_list[0])
     mouse_drag.move_to_element(fp_list[0]).perform()
-    mouse_drag.drag_and_drop_by_offset(
-        fp_section, scroll_to_prev, 0
-    ).perform()
+    mouse_drag.drag_and_drop_by_offset(fp_section, scroll_to_prev, 0).perform()
 
     visible_elements = list(
-        filter(
-            lambda x: len(x.text) > 0 and x.is_displayed(),
-            fp_list
-        )
+        filter(lambda x: len(x.text) > 0 and x.is_displayed(), fp_list)
     )
     assert visible_elements == fp_initial_visible_elements
 
     # Verify scrolling right
     mouse_drag.drag_and_drop_by_offset(fp_section, scroll_to_next, 0).perform()
     visible_elements = list(
-        filter(
-            lambda x: len(x.text) > 0 and x.is_displayed(),
-            fp_list
-        )
+        filter(lambda x: len(x.text) > 0 and x.is_displayed(), fp_list)
     )
     assert visible_elements != fp_initial_visible_elements
 
@@ -597,14 +570,13 @@ def test_case_check_featured_products_mouse_scroll(main_page):
     for idx in range(len(visible_elements), len(fp_list)):
         current_visible_element = fp_list[idx]
         mouse_drag.move_to_element(current_visible_element)
-        mouse_drag.drag_and_drop_by_offset(current_visible_element, scroll_to_next, 0)
+        mouse_drag.drag_and_drop_by_offset(
+            current_visible_element, scroll_to_next, 0
+        )
         mouse_drag.perform()
 
     final_visible_elements = list(
-        filter(
-            lambda x: len(x.text) > 0 and x.is_displayed(),
-            fp_list
-        )
+        filter(lambda x: len(x.text) > 0 and x.is_displayed(), fp_list)
     )
     assert final_visible_elements != visible_elements
 
@@ -617,9 +589,6 @@ def test_case_check_featured_products_mouse_scroll(main_page):
     mouse_drag.perform()
 
     visible_elements = list(
-        filter(
-            lambda x: len(x.text) > 0 and x.is_displayed(),
-            fp_list
-        )
+        filter(lambda x: len(x.text) > 0 and x.is_displayed(), fp_list)
     )
     assert visible_elements == final_visible_elements
